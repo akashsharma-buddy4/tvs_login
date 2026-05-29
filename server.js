@@ -4,23 +4,29 @@ const app = express();
 
 app.use(express.json());
 
-const VERIFY_TOKEN = process.env.VERIFY_TOKEN ||  "EAASiiFi3NM4BRs8jsIdTUR7A6Lt4le2qK1zqSkKYgZAChBn7zeRXwHZA3h49X9DhSRKZCIqfgIBViKulFtDXqLGnMUZBfuCrrBc9IQ2f9XvZCXUHvnNi8cUBHEUmuEN31OtN5NmUgCSBvwiEUwkrykZBZC2ux7KMuDNwD2rcAnXZAYp3J1VaBNWHHIDIakJK3sX0ykj1evUfWiZAywM6HvRllZAG5MSpdx70UWNZAQTwAVubCs4pNWDe3NDZCLxRa4Da8gkebguv9RoJtVgsnX30RRR1aOMR";
+const VERIFY_TOKEN = "mywhatsapp123";
 
-// Webhook verification
+app.get("/", (req, res) => {
+  res.send("WhatsApp webhook server is running");
+});
+
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
+
+  console.log("Webhook GET called");
+  console.log("mode:", mode);
+  console.log("token:", token);
 
   if (mode === "subscribe" && token === VERIFY_TOKEN) {
     console.log("Webhook Verified");
     return res.status(200).send(challenge);
   }
 
-  return res.sendStatus(403);
+  return res.status(403).send("Forbidden");
 });
 
-// Receive WhatsApp messages
 app.post("/webhook", (req, res) => {
   console.log("Incoming Webhook:");
   console.log(JSON.stringify(req.body, null, 2));
